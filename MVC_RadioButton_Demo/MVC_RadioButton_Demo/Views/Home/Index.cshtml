@@ -1,0 +1,19 @@
+﻿@model MVC_RadioButton_Demo.Models.Company
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+@using (Html.BeginForm())
+{
+
+   foreach (var department in Model.Departments)
+    {
+        @Html.RadioButtonFor(m => m.SelectedDepartment, department.DeptId,
+       (department.IsSelected.ToString()!=null && department.IsSelected==true)? new {@checked="checked"}:null
+       ) @department.DeptName
+    }
+    <br />
+    <br />
+    <input type="submit" value="submit" />
+}

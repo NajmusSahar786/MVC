@@ -1,0 +1,25 @@
+﻿@model IEnumerable<MVC_FILE_DEMO.Models.FileDetailsModel>
+<table class="table table-bordered" style="border:groove" style="height:300px">
+    <tr>
+
+        <th class="col-md-4">
+            @Html.DisplayNameFor(model => model.FileName)
+        </th>
+        <th>SubmittedDate</th>
+        <th class="col-md-2">Action</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+<tr>
+    <td>
+        @Html.DisplayFor(modelItem => item.FileName)
+    </td>
+    <td> @Html.DisplayFor(modelItem => item.SubmittedDate)</td>
+    <td>
+        @Html.ActionLink("Download", "DownLoadFile", new { id = item.Id })
+    </td>
+</tr>
+}
+
+</table>

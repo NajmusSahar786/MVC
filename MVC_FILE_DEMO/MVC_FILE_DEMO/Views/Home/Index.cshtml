@@ -1,0 +1,57 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <div class="col-md-12">
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-12">
+        </div>
+    </div>
+    <div class="form-group" style="height:300px">
+        <div class="col-md-6">
+            <table>
+                <tbody>
+
+                    <tr>
+                        <td class="col-md-6" style="align-content:center">@Html.ActionLink("Upload File", "FileUpload", "Home")</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <table>
+                <tbody>
+                    <tr>
+                        <td class="col-md-6" style="align-content:center">@Html.ActionLink("Export PDF", "DownLoadExport", "Home")</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-offset-2 col-md-10 text-success">
+            @ViewBag.FileStatus
+        </div>
+
+        <div class="col-md-6" style="height:300px">
+            <table>
+                <thead><tr><th class="col-md-6"> Download File</th></tr> </thead>
+                <tbody>
+                    <tr>
+                        <td class="col-md-6">
+                            @Html.Action("FileDetails", "Home")
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+       
+        }
+        <script src="~/Scripts/jquery-1.10.2.min.js"></script>
+        <script src="~/Scripts/jquery.validate.min.js"></script>
+        <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
