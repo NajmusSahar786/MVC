@@ -1,0 +1,63 @@
+﻿<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>TempDataDemo</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            ShowData();
+        })
+        function ShowData() {
+            getEmployeeTable();
+            getCourseTable();
+            getDepartmentTable();
+        }
+        function getCourseTable()
+        {
+            $("#CoursesForEmp").empty();
+            $("#CoursesForEmp").append("<table id='tblCourses'><tr><th  style='width:120px;'>Course Code </th><th >Course Name </th> </tr> </table>");
+            var allCourses = @Html.Raw(Json.Encode(TempData["Courses"]));
+            for (var i = 0; i < allCourses.length; i++)
+            {
+                $("#tblCourses").append(" <tr> <td >" + allCourses[i].CourseCode + " </td> <td >" + allCourses[i].CourseName + " </td> </tr>");
+            }
+        }
+        function getEmployeeTable()
+        {
+            $("#EmpolyeeList").empty();
+            $("#EmpolyeeList").append("<table id='tblEmployee'><tr><th  style='width:120px;'>Employee Code </th><th >Employee Name </th> </tr> </table>");
+            var allEmployees =@Html.Raw(Json.Encode(TempData["Employees"]));
+            for (var i = 0; i < allEmployees.length;i++)
+            {
+                $("#tblEmployee").append(" <tr> <td >" + allEmployees[i].EmpCode + " </td> <td >" + allEmployees[i].EmpName + " </td> </tr>");
+            }
+        }
+        function getDepartmentTable() {
+            $("#DepartmentForEmp").empty();
+            $("#DepartmentForEmp").append(" <table id='tblDepartment'><tr> <th  style='width:120px;'> Department Code </th> <th >Department Name </th></tr></table>");
+            var allDepts =@Html.Raw(Json.Encode(TempData["Departments"]));
+            for (var i = 0; i < allDepts.length; i++)
+            {
+                $("#tblDepartment").append(" <tr> <td >" + allDepts[i].DepCode + " </td> <td >" + allDepts[i].DepName + " </td> </tr>");
+            }
+        }
+    </script>
+</head>
+<body>
+    
+    <div>
+        <h4>Courses List Multiple Models using TempData</h4>
+        <div id="CoursesForEmp">
+        </div>
+
+        <h4>Employees List Multiple Models using TempData</h4>
+        <div id="EmpolyeeList">
+        </div>
+
+        <h4>Departments List Multiple Models using TempData</h4>
+        <div id="DepartmentForEmp">
+
+        </div>
+    </div>
+</body>
+</html>

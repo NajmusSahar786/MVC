@@ -1,0 +1,125 @@
+﻿@model MVC_Practice_Test.ViewModel.RegistrationViewModel
+@{
+    ViewBag.Title = "Employee";
+}
+
+<h2>Employee</h2>
+
+<html>
+<head>
+</head>
+<body>
+    @using (Html.BeginForm("AddEmployee", "Employee", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <table>
+            <tr>
+                <th>Name </th>
+                <td></td>
+                <td></td>
+                <td>@Html.TextBoxFor(m => m.Name, new { @class = "form-control" })</td>
+            </tr>
+            <tr><td></td><td></td><td></td><td></td></tr>
+            <tr>
+                <th>Email</th>
+                <td></td>
+                <td></td>
+                <td>@Html.TextBoxFor(m => m.Email, new { @class = "form-control" })</td>
+            </tr>
+            <tr><td></td><td></td></tr>
+            <tr>
+                <th>Gender </th>
+                <td></td>
+                <td></td>
+                <td>
+
+                    <div class="col-md-10">
+                        @foreach (var item in Model.GenderList)
+                        {
+                            @Html.RadioButtonFor(m => m.GenderList, @item.GenderID)
+                            @Html.Label(@item.GenderName)
+                        }
+                    </div>
+
+                </td>
+            </tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+            </tr>
+            <tr>
+                <th>Qualification </th>
+                <td></td>
+                <td></td>
+                <td>
+                    @Html.DropDownListFor(m => m.QualificationList, new SelectList(Model.QualificationList, "CourseCode", "CourseName"), "--Select--", new { @class = "form-control" })
+                </td>
+            </tr>
+            <tr><td></td><td></td><td></td><td></td></tr>
+            <tr>
+                <th style="vertical-align:text-top!important">Hobbies:</th>
+                <td></td>
+                <td></td>
+                <td>
+
+                    @foreach (var item in Model.HobbiesList)
+                    {
+                        <div class="checkbox">
+                            <label>
+                                <input type="checkbox"
+                                       name="SelectedHobbies"
+                                       value="@item.HobbyID" checked="@item.Checked" /> @item.HobbyName
+                                    <input type="hidden" value="@item.HobbyID" />
+                                </label>
+                            </div>
+                        }
+                </td>
+            </tr>
+            <tr>
+                <th style="vertical-align:top!important">Resume </th>
+                <td></td>
+                <td></td>
+                <td>
+                    @using (Html.BeginForm("FileUpload", "Employee", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="form-horizontal">
+                            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+                            <div class="form-group">
+                                <div class="col-md-10">
+                                    @Html.TextBoxFor(model => model.ResumeList.files, "", new { @type = "file", @multiple = "multiple" })
+                                    @Html.ValidationMessageFor(model => model.ResumeList.files, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10">
+                                    <input type="submit" value="Upload" class="btn btn-primary" />
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-md-offset-2 col-md-10 text-success">
+                                    @ViewBag.FileStatus
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </td>
+            </tr>
+            <tr><td></td><td></td></tr>
+            <tr>
+                <td></td>
+                <td>
+                    <input type="submit" value="Submit" class="btn btn-primary" />
+                </td>
+            </tr>
+            <tr><td></td><td> <asp:Label ID="lblmsg" runat="server" ForeColor="Red"></asp:Label></td></tr>
+            <tr>
+                <td>&nbsp;</td>
+                <td></td>
+            </tr>
+        </table>
+    }
+</body>
+</html>
+

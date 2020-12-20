@@ -1,0 +1,31 @@
+﻿@model MVC_Practice_Test.ViewModel.ViewModelDemo
+@{
+    ViewBag.Title = "ViewModelDemo";
+}
+
+<h2>ViewModelDemo</h2>
+<select>
+    @foreach (var item in Model.allEmployees)
+    {
+        <option>
+            @item.EmpName
+        </option>
+    }
+</select>
+<select>
+    @foreach (var item in Model.allCourses)
+    {
+        <option>
+            @item.CourseName
+        </option>
+    }
+</select>
+<select>
+    @foreach (var item in Model.allDepartments)
+    {
+        <option>
+            @item.DepName
+        </option>
+    }
+</select>
+

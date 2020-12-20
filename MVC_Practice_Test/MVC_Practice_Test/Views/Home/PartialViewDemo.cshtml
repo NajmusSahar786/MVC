@@ -1,0 +1,82 @@
+﻿@model  IEnumerable<MVC_Practice_Test.Models.Employee>
+<h2>PartialViewDemo Show Courses</h2>
+
+<select id="ddlEmployeeCourse">
+    @*Iterating Employee ViewModel *@
+
+    @foreach (var emp in Model)
+    {
+        <option value="@emp.EmpCode">@emp.EmpName</option>
+    }
+
+</select>
+<h4>Courses Of Selected Employeee</h4>
+<div id="CoursesForEmp">
+</div>
+
+
+<h2>PartialViewDemo Show Departments</h2>
+<select id="ddlEmployeeDept">
+    @*Iterating Employee ViewModel *@
+
+    @foreach (var emp in Model)
+    {
+        <option value="@emp.EmpCode">@emp.EmpName</option>
+    }
+
+</select>
+
+
+<h4>Departments Of Selected Employeee</h4>
+<div id="DepartmentForEmp">
+
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+
+    function getDepartmentTable(selectedEmpCode) {
+        $.ajax({
+            // Get Department PartialView
+            url: "/Home/DepartmentPartialDemo",
+            type: 'GET',
+            data: { EmpCode: selectedEmpCode },
+            success: function (data) {
+                $("#DepartmentForEmp").html(data);
+            },
+            error: function (error) {
+                alert("Error: Please try again.");
+            }
+        });
+    }
+
+
+    function getCourseTable(selectedEmpCode) {
+
+        $.ajax({
+            // Get Course PartialView
+            url: "/Home/CoursePartialDemo",
+            type: 'GET',
+            data: { EmpCode: selectedEmpCode },
+            success: function (data) {
+                $("#CoursesForEmp").html(data);
+            },
+            error: function (error) {
+                alert("Error: Please try again.");
+                console.log(data);
+            }
+        });
+    }
+
+
+    $(document).ready(function () {
+        $("#ddlEmployeeCourse").change(function (index) {
+            var selectedEmpCode = $(this).val();
+            getCourseTable(selectedEmpCode);
+        });
+        $("#ddlEmployeeDept").change(function (index) {
+            var selectedEmpCode = $(this).val();
+            getDepartmentTable(selectedEmpCode);
+        });
+
+    });
+</script>

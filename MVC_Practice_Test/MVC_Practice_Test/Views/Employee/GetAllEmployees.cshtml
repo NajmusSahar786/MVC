@@ -1,0 +1,46 @@
+﻿@model IEnumerable<MVC_Practice_Test.Models.EmployeeModel>
+<table class="table table-bordered" style="border:groove">
+    <tr>
+        <th>
+            Name
+        </th>
+        <th>
+            Email
+        </th>
+        <th>
+            Gender
+        </th>
+        <th>
+            Course
+        </th>
+        <th>
+            Hobbies
+        </th>
+        <th class="col-md-4">
+            @Html.DisplayNameFor(model => model.FileName)
+        </th>
+
+        <th class="col-md-2">Action</th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+    <tr>
+        <td>@item.Name</td>
+        <td>@item.EmailId</td>
+        <td>@item.GenderName</td>
+        <td>@item.CourseName</td>
+        <td>@item.Hobbies</td>
+        <td>
+            @Html.DisplayFor(modelItem => item.FileName)
+        </td>
+
+        <td>
+            @Html.ActionLink("Download", "DownLoadFile", new { id = item.Id })
+        </td>
+
+    </tr>
+    }
+
+</table>
+

@@ -1,0 +1,95 @@
+﻿
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>ViewDataDemo</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function(){
+            ShowData();
+        })
+
+        function ShowData(){
+            getEmployeeTable();
+            getCourseTable();
+            getDepartmentTable();
+        }
+
+        //Create table to display Course detail
+        function getCourseTable() {
+            $("#CoursesForEmp").empty();
+            $("#CoursesForEmp").append("<table id='tblCourses'><tr><th  style='width:120px;'>Course Code </th><th >Course Name </th> </tr> </table>");
+
+            //Get all Courses with the help of model
+            //(ViewData["Courses"]), and convert data into json format.
+            var allCourses = @Html.Raw(Json.Encode(ViewData["Courses"]));
+
+            for (var i = 0; i  < allCourses.length; i++) {
+
+                $("#tblCourses").append
+                        (" <tr> <td >"  +
+                        allCourses[i].CourseCode
+                            + " </td> <td >"+
+                            allCourses[i].CourseName+" </td> </tr>");
+
+            }
+        }
+
+        //Create table to display Employee detail
+        function getEmployeeTable() {
+            $("#EmpolyeeList").empty();
+            $("#EmpolyeeList").append(" <table id='tblEmployee' > <tr> <th  style='width:120px;'> Employee Code </th> <th >Employee Name </th> </tr> </table>");
+
+            //Get all Employees with the help of model
+            //(ViewData["Employees"]), and convert data into json format.
+            var allEmployees = @Html.Raw(Json.Encode(ViewData["Employees"]));
+
+            for (var i = 0; i  < allEmployees.length; i++) {
+                $("#tblEmployee").append(" <tr>" +
+                "<td >"  + allEmployees[i].EmpCode +
+                    " </td> <td >"+
+            allEmployees[i].EmpName+" </td> </tr>");
+
+            }
+        }
+
+        //Create table to display Department detail
+        function getDepartmentTable() {
+            $("#DepartmentForEmp").empty();
+            $("#DepartmentForEmp").append(" <table id='tblDepartment' > <tr> <th  style='width:120px;'> Department Code </th> <th >Department Name </th> </tr> </table>");
+
+            //Get all departments with the help of model
+            //(ViewData["Departments"]), and convert data into json format.
+            var allDepartments = @Html.Raw(Json.Encode(ViewData["Departments"]));
+
+            for (var i = 0; i  < allDepartments.length; i++) {
+                $("#tblDepartment").append(" <tr>" +
+                        "<td >"  + allDepartments[i].DepCode +
+                            " </td> <td >"+
+                    allDepartments[i].DepName+" </td> </tr>");
+
+            }
+        }
+
+
+    </script>
+</head>
+<body>
+    <div>
+
+        <h4>Courses List Multiple Models using ViewData</h4>
+        <div id="CoursesForEmp">
+        </div>
+
+        <h4>Employees List Multiple Models using ViewData</h4>
+        <div id="EmpolyeeList">
+        </div>
+
+        <h4>Departments List Multiple Models using ViewData</h4>
+        <div id="DepartmentForEmp">
+
+        </div>
+
+    </div>
+</body>
+</html>

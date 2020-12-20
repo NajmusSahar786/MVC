@@ -1,0 +1,14 @@
+﻿@model  IEnumerable<MVC_Practice_Test.Models.Department>
+<table>
+    <tr>
+        <th style="width:120px;">Department Code</th>
+        <th>Department Name </th>
+    </tr>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>@item.DepCode </td>
+            <td>@item.DepName </td>
+        </tr>
+    }
+</table>
