@@ -1,0 +1,86 @@
+﻿@model Insurance.Life.Model.Models.InsuredDetailNew
+<table style="width: 100%">
+    <tr>
+        <td>
+            <span><b>@Html.LabelFor(x => x.ProposalName)</b></span>
+        </td>
+        <td>
+            @Html.DisplayFor(x => x.ProposalName)
+        </td>
+        <td></td>
+        <td>
+            <b>@Html.LabelFor(x => x.PolicyNo)</b>
+        </td>
+        <td>
+            @Html.DisplayFor(x => x.Pol_INSURPolicyno)
+        </td>
+    </tr>
+    <tr>
+        <td style="width: 16%;">
+            <span><b>@Html.LabelFor(x => x.ProposerName)</b></span>
+        </td>
+        <td style="width: 32%;">
+            @Html.DisplayFor(x => x.ProposerName)
+        </td>
+        <td style="width: 6%;"></td>
+        <td style="width: 18%;">
+            <span><b>@Html.LabelFor(x => x.FileNo)</b></span>
+        </td>
+        <td style="width: 30%;">
+            @Html.HiddenFor(x => x.FileNo, new { @id = "hdnFileNo" })
+            @Html.DisplayFor(x => x.FileNo)
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <b>@Html.LabelFor(x => x.From)</b>
+        </td>
+        <td>
+            @Html.DisplayFor(x => x.From, new { @id = "lblStartDate" })
+            @Html.HiddenFor(x => x.From, new { @id = "hdnStartDate" })
+        </td>
+        <td></td>
+        <td>
+            <span><b>@Html.LabelFor(x => x.To)</b></span>
+        </td>
+        <td>
+            @Html.DisplayFor(x => x.To)
+            @Html.HiddenFor(x => x.To, new { @id = "hdnEndDate" })
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <b>@Html.LabelFor(x => x.TransactionDate)</b>
+        </td>
+        <td>
+            @Html.DisplayFor(x => x.TransactionDate)
+        </td>
+        <td></td>
+        <td>
+            <span><b>@Html.LabelFor(x => x.TransactionType)</b></span>
+        </td>
+        <td>
+            @Html.DisplayFor(x => x.TransactionType)
+        </td>
+    </tr>
+
+    <tr style="display: none">
+        <td colspan="5" />
+    </tr>
+</table>
+
+<div>
+    @Html.HiddenFor(m => m.ProposalName, new { @id = "proposerType" })
+    @Html.HiddenFor(m => m.PolicyNo, new { @id = "hdnPolicyNo" })
+    @Html.HiddenFor(m => m.PolicyTypeClass, new { @id = "policytype" })
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var policyNo = "@Model.PolicyNo";
+        var className = $('#Coverage').attr('class');
+        if (policyNo != "N.A" && className == "active") {//if policy has been issued
+            DisableControls();
+        }
+    });
+</script>

@@ -1,0 +1,545 @@
+﻿@model Insurance.Life.Model.Models.PolicyInsuredModel
+@{
+    /**/
+
+    /**/
+
+    ViewBag.Title = "Member";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+<script src="@Url.Content("~/Scripts/Policy/Member.js?v=16")"></script>
+<script src="@Url.Content("~/Scripts/GridConfigurations.js")"></script>
+<link href="@Url.Content("~/Content/jquery.jqGrid/ui.jqgrid.css")" rel="stylesheet" />
+<link href="@Url.Content("~/Content/themes/radmond/jquery-ui.css")" rel="stylesheet" />
+<script src="@Url.Content("~/Scripts/i18n/grid.locale-en.js")"></script>
+<script src="@Url.Content("~/Scripts/jquery.jqGrid.min.js")"></script>
+<script src="@Url.Content("~/Scripts/Common/Common.js?v=5")"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $("#MemberOtherBeneficiaryDetails_proposerType").on('change', function () {
+            var value = $(this).val();
+            console.log(value);
+            if (value == 'I') {
+                $(this).css('margin-left', '13px');
+            }
+            else {
+                $(this).css('margin-left', '2px');
+            }
+        })
+        GetCountryByBusinessLine("HomeAddressView", "Ads_CountryId", "");
+        GetCountryByBusinessLine("MailAddressView", "Ads_CountryId", "");
+
+        $(".HomeAddressView").find("#ctrlTitle").text("Home Address");
+        $(".MailAddressView").find("#ctrlTitle").text("Mailing Address");
+        $(".MailAddressView").find("#trSameAddress").show();
+    });
+    $(document).ready(function () {
+        $("#FamilyMemberDetails_DateofBirth").change(ShowAdditionalFields);
+        let policyType = $('#policyType').val();
+        if (policyType == "IHLH" || policyType == "EMPB") {
+            $('#MemberPlanRow').show();
+        }
+        else {
+            $('#MemberPlanRow').hide();
+        }
+    });
+</script>
+<style>
+    #pg_MemberOtherBeneficiarypager, #MemberOtherBeneficiaryList, #gview_MemberOtherBeneficiarygrid, #MemberOtherBeneficiarypager, #gbox_MemberOtherBeneficiarygrid {
+        width: 970px !important;
+        height: 100% !important;
+    }
+
+    .ui-state-default .ui-jqgrid-hdiv {
+        width: 970px !important;
+    }
+
+    .ui-jqgrid-bdiv {
+        width: 970px !important;
+    }
+
+    .ui-jqgrid .ui-jqgrid-htable {
+        table-layout: auto;
+        width: 970px !important;
+    }
+
+    #MemberOtherBeneficiarygrid {
+        width: 970px !important;
+        table-layout: auto;
+    }
+
+    .ui-jqgrid tr.jqgrow td {
+        width: 13% !important;
+        height: 30px !important;
+    }
+
+    .ui-th-column, .ui-jqgrid .ui-jqgrid-htable th.ui-th-column {
+        width: 13% !important;
+        height: 30px !important
+    }
+</style>
+<script>
+    function ValidateIDDetails() {
+        var skillsSelect = $("#FamilyMemberDetails_IDDetails_IDType");
+        var MemberPermitNo = $("#lblDriverPermitNo");
+        var selectedText;
+        if (skillsSelect != null) {
+            selectedText = skillsSelect.find("option:selected").text();
+        }
+        if (selectedText == "Select") {
+            if (MemberPermitNo != null && MemberPermitNo != "") {
+                MemberPermitNo.text("ID Card No.");
+            }
+
+        } else {
+            if (MemberPermitNo != null && MemberPermitNo != "") {
+
+                MemberPermitNo.text(selectedText + " No.");
+            }
+        }
+
+        if (skillsSelect != null) {
+            if (skillsSelect.val() == "3") {
+
+            }
+        }
+    }
+    function validateSec(obj, fileTypes) {
+
+        var fileName = obj.value;
+        if (!fileName) return;
+
+        dots = fileName.split("."); //get the part AFTER the LAST period.
+        fileType = "." + dots[dots.length - 1];
+
+        if ((fileTypes.join(".").indexOf(fileType) == -1)) {
+
+
+            alert("Please only upload files that end in types: \n\n" + (fileTypes.join(" .")) +
+                "\n\nPlease select a new file and try again.");
+
+            var $el = $('#fuIDDetail2');
+
+            $el.wrap('<form>').closest('form').get(0).reset();
+            $el.unwrap();
+
+
+            return false;
+
+        }
+        else {
+
+
+            var iSize = ($("#fuIDDetail2")[0].files[0].size / 1024);
+            if (iSize > 1024) {
+
+                alert("The document size should not be greater than " + 1024 + " KB.");
+                var $el = $('#fuIDDetail2');
+                $el.wrap('<form>').closest('form').get(0).reset();
+                $el.unwrap();
+
+                return false;
+            }
+            else {
+                return true;
+            }
+        }
+    }
+    function Showloader() {
+        $.blockUI({ message: $('#divBlock'), css: { border: 'none', background: 'transparent' } });
+        return true;
+    }
+
+
+</script>
+@using (Ajax.BeginForm("SaveMultipleMember", "Policy",
+                                                                            new AjaxOptions
+                                                                            {
+                                                                                HttpMethod = "POST",
+                                                                                InsertionMode = InsertionMode.Replace,
+                                                                                UpdateTargetId = "target",
+                                                                                OnSuccess = "Success",
+                                                                                OnBegin = "new function(){StartValidation(); saveQuesionaaire();}",
+                                                                                OnFailure = "Faliure",
+                                                                            }, new { @id = "MultipleMemberDetail", @name = "MultipleMemberDetail", enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="CommandName" id="hdnCommandName" />
+    <input type="hidden" name="hdnPersonalInfoId" id="hdnPersonalInfoId" value="@Model.beneficiaryDetails.PersonalInfoId" />
+    <input type="hidden" name="EffectiveDate" id="hdnEffectiveDate" value="@Model.effectiveDate" />
+    <input type="hidden" name="hdnOperation" id="hdnOperation" />
+    <input type="hidden" name="hdnRedirectedFrom" id="hdnRedirectedFrom" value="@Model.RedirectedFrom" />
+    <input type="hidden" name="hdnBaseCoverSelected" id="hdnBaseCoverSelected" value="@Model.BaseCoverSelected" />
+    <input type="hidden" name="hdnPolicyType" id="hdnPolicyType" value="@Model.policyType" />
+    <input type="hidden" name="loanID" id="loanID" />
+    <input type="hidden" name="cbID" id="cbID" />
+    <input type="hidden" name="bfID" id="bfID" />
+    <input type="hidden" name="hdnPreventdoubleClick" id="hdnPreventdoubleClick" value="" />
+    @Html.HiddenFor(model => model.MemberCoverageViewModel.DocumentReview, new { @id = "hdnDocumentReview" })
+    @Html.HiddenFor(model => model.MemberCoverageViewModel.SelectedMemberCoverage, new { @id = "hdnMemberCoverage" })
+    @Html.HiddenFor(x => x.QuoteNo)
+    @Html.HiddenFor(x => x.PersonalInfoId)
+    @Html.HiddenFor(x => x.policyType);
+
+    int? deid = ViewBag.hdnDedValID;
+    int? deusid = ViewBag.hdnDedValUSID;
+    if (deid > 0)
+    {
+        <input type="hidden" id="hdnDedValID" name="hdnDedValID" value="@deid.ToString()" />
+    }
+    else
+    {
+        <input type="hidden" id="hdnDedValID" name="hdnDedValID" value="" />
+    }
+
+    if (deusid > 0)
+    {
+        <input type="hidden" id="hdnDedValUSID" name="hdnDedValUSID" value="@deusid.ToString()" />
+
+    }
+    else
+    {
+        <input type="hidden" id="hdnDedValUSID" name="hdnDedValUSID" value="" />
+
+    }
+    <input type="hidden" id="hdnMemberBasePlanId" name="hdnMemberBasePlanId" value="" />
+
+    if (Model != null && Model.userDetails != null)
+    {
+        @Html.Partial("_TopMenuPartial", Model.userDetails)
+    }
+    <fieldset class="search-top">
+        <legend><span>@Html.LabelFor(x => x.beneficiaryDetails.InsuredPolicyDetails)</span></legend>
+        <div class="legendmid-bg">
+            @Html.Action("_InsuredDetailPartialNew", "Policy")
+        </div>
+        <div class="legendbottombg">
+        </div>
+    </fieldset>
+
+    <div id="divAddMember">
+        @Html.Partial("~/Views/UserControl/Policy/Member/_MemberCoveragePartial.cshtml", Model)
+
+        @{var Cov_BussinessClass = Model.CoverageDetailViewModel.BaseCoverModel.Select(x => x.Cov_BusinessClass).FirstOrDefault(); }
+        @if ((Model.policyType == "IHLH" && Cov_BussinessClass == "O") || (Model.policyType == "EMPB" && Cov_BussinessClass == "U"))
+        {
+            <fieldset class="search-top" id="fsPolicyInfo">
+                <legend><span>Payment Setup</span></legend>
+                <div class="legendmid-bg">
+                    <table style="width: 100%">
+                        <tbody>
+                            <tr id="trQuoteNo">
+
+
+                                <td style="width:20%">
+                                    @Html.LabelFor(x => x.beneficiaryDetails.PremiumFrequency) <span style="color: Red;">*</span>
+                                </td>
+
+                                <td style="width:30%">
+                                    @if (Model != null && Model.beneficiaryDetails != null)
+                                    {
+                                        @Html.DropDownListFor(m => m.beneficiaryDetails.PremiumFrequency, new SelectList(Model.beneficiaryDetails.PremiumFrequencyInfo, "FrequencyCode", "FrequencyName"), new { style = "width: 225px;" })
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownListFor(m => m.beneficiaryDetails.PremiumFrequency, new SelectList(string.Empty, "0", "Text"), "Select", new { style = "width: 225px;", @disabled = "disabled" })
+                                    }
+                                </td>
+                                <td style="width:20%"></td>
+                                <td style="width:30%"></td>
+                            </tr>
+
+                            @if (ViewBag.PolicyTypeClass.Trim().ToLower() == "pen")
+                            { }
+                            else
+                            {
+                                <tr id="trPremiumMode">
+                                    <td colspan="4">
+                                        <table style="width: 100%">
+                                            <tr>
+                                                <td style="width:20%">
+                                                    @Html.LabelFor(x => x.beneficiaryDetails.PremiumMode) <span style="color: Red;">*</span>
+                                                </td>
+                                                <td style="width:30%">
+                                                    @if (Model != null && Model.policyInfoModel != null)
+                                                    {
+                                                        @Html.DropDownListFor(m => m.beneficiaryDetails.PremiumMode, new SelectList(Model.beneficiaryDetails.PremiumModes, "Key", "Value"), new { style = "width: 105px;" })
+                                                    }
+                                                    else
+                                                    {
+                                                        @Html.DropDownListFor(m => m.beneficiaryDetails.PremiumMode, new SelectList(string.Empty, "0", "Text"), "Select", new { style = "width: 105px;", @disabled = "disabled" })
+                                                    }
+                                                </td>
+                                                <td style="width:20%"></td>
+                                                <td style="width:30%"></td>
+                                            </tr>
+
+                                            <tr>
+                                                <td id="MemberOnlyLabel" style="display:none;">
+                                                    @Html.LabelFor(x => x.beneficiaryDetails.MemberOnly)
+                                                </td>
+                                                <td id="MemberOnlyTextbox" style="display:none;">
+                                                    @Html.TextBoxFor(x => x.beneficiaryDetails.MemberOnly, new { @maxlength = "6", @autocomplete = "off", @style = "width:70px;", onkeypress = "return blockNonNumbers(this, event, true, true);", @onblur = "VaidatePremiumModeValue(this);" })
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td id="MemberoneLabel" style="display:none;">
+                                                    @Html.LabelFor(x => x.beneficiaryDetails.Memberone)
+                                                </td>
+                                                <td id="MemberoneTextbox" style="display:none;">
+                                                    @Html.TextBoxFor(x => x.beneficiaryDetails.Memberone, new { @maxlength = "6", @autocomplete = "off", @style = "width:70px;", onkeypress = "return blockNonNumbers(this, event, true, true);", @onblur = "VaidatePremiumModeValue(this);" })
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td id="MemberFamilyLabel" style="display:none;">
+                                                    @Html.LabelFor(x => x.beneficiaryDetails.MemberFamily)
+                                                </td>
+                                                <td id="MemberFamilyTextbox" style="display:none;">
+                                                    @Html.TextBoxFor(x => x.beneficiaryDetails.MemberFamily, new { @maxlength = "6", @autocomplete = "off", @style = "width:70px;", onkeypress = "return blockNonNumbers(this, event, true, true);", @onblur = "VaidatePremiumModeValue(this);" })
+                                                </td>
+                                            </tr>
+
+                                        </table>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+
+                            @if (ViewBag.PolicyTypeClass.Trim().ToLower() == "pen")
+                            { }
+                            else
+                            {
+                                <tr>
+                                    <td>
+                                        @Html.LabelFor(x => x.beneficiaryDetails.RefundOption) <span style="color: Red;">*</span>
+                                    </td>
+                                    <td>
+                                        @Html.DropDownListFor(x => x.beneficiaryDetails.RefundOption, new SelectList(new List<Object>{
+                                                            new { value  = "select" , text  = "Select" },
+                                                            new { value  = "Single" , text  = "Single" },
+                                                            new { value  = "Pro-Rate" , text  = "Pro-Rate" },
+                                                            new { value  = "Short-Rate" , text  = "Short-Rate" },
+                                                            }, "value ", "text "), new { style = "width: 105px;" })
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+
+                            }
+                            <tr style="display :none">
+                                <td>
+                                    @Html.LabelFor(x => x.policyInfoModel.AdjustmentFrequency) <span style="color: Red;">*</span>
+                                </td>
+                                <td>
+
+                                    @Html.DropDownListFor(m => m.policyInfoModel.AdjustmentFrequency, new SelectList(string.Empty, "0", "Text"), "Select", new { style = "width: 225px;" })
+                                </td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            @if (ViewBag.PolicyTypeClass.Trim().ToLower() == "pen")
+                            {
+                                <tr>
+                                    <td>
+                                        <label>Plan Type</label>
+                                    </td>
+                                    <td>
+                                        <table>
+                                            <tr>
+                                                <td>
+                                                    <input type="radio" name="gender" value="Defined Benefits"> Defined Benefits &nbsp;
+                                                </td>
+                                                <td>
+                                                    <input type="radio" name="gender" value="Defined Contributions" checked="true"> Defined Contributions
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="legendbottombg">
+                </div>
+            </fieldset>
+        }
+
+        @if (Model.policyType == "IHLH" || Model.policyType == "EMPB")
+        {
+            @Html.Partial("~/Views/UserControl/Policy/PolicyInsured/ApplicantDetail/_QuestionaireLifePartial.cshtml", Model)
+        }
+
+        @if (ViewBag.PolicyTypeClass.Trim().ToLower() == "pen")
+        {
+            <!--End SuperAnnuation-->
+            <div id="divsuperannuation">
+                <fieldset class="search-top">
+                    <legend><span>Superannuation Details</span></legend>
+                    <div class="legendmid-bg">
+                        @Html.Partial("~/Views/Shared/Policy/_SourceOfFundPartial.cshtml", Model)
+                    </div>
+                    <div class="legendbottombg">
+                    </div>
+                </fieldset>
+            </div>
+            <!--End SuperAnnuation-->
+
+
+            <!--End Plan Details-->
+            <div id="divPlanDetails">
+                <fieldset class="search-top">
+                    <legend><span>Plan Details</span></legend>
+                    <div class="legendmid-bg">
+                        <table width="100%">
+                            <tr>
+                                <td>
+                                    Annual Contribution
+                                </td>
+                                <td>
+                                    @Html.TextBox("txtAnnualContribution", 12.5) %
+                                </td>
+                                <td>Frequency Of Payment</td>
+                                <td>
+                                    <table>
+                                        <tr>
+                                            <td><input type="radio" name="freqOfPay" value="annual"> Annual&nbsp;</td>
+                                            <td><input type="radio" name="freqOfPay" value="semiannual"> Semi-Annual&nbsp;</td>
+                                            <td><input type="radio" name="freqOfPay" value="quaterly"> Quaterly&nbsp;</td>
+                                            <td><input type="radio" name="freqOfPay" value="monthly" checked="true"> Monthly&nbsp;</td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Mode of Payment
+                                </td>
+                                <td>
+                                    <table>
+                                        <tr>
+                                            <td><input type="radio" name="moedOfPay" value="pap"> PAP   &nbsp;</td>
+                                            <td><input type="radio" name="moedOfPay" value="salary" checked="true"> Salary Deduction &nbsp;  </td>
+                                            <td><input type="radio" name="moedOfPay" value="cash"> Cash  &nbsp; </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="legendbottombg">
+                    </div>
+                </fieldset>
+            </div>
+            <!--End Plan Details-->
+
+            <!--End Risk Details-->
+            @Html.Partial("~/Views/Shared/Policy/_RiskPreferencePartial.cshtml", Model)
+            @Html.Partial("~/Views/Shared/Policy/_InvestmentApproach.cshtml", Model)
+            @Html.Partial("~/Views/Shared/Policy/_AnnuityBenefitPlanPartial.cshtml", Model)
+            <!--End Risk Details-->
+
+
+
+
+            <!--End Contribution  Details-->
+            <div id="divsuperannuation">
+                <fieldset class="search-top">
+                    <legend><span>Contribution Details</span></legend>
+                    <div class="legendmid-bg">
+                        <table width="100%">
+                            <tr>
+                                <td><b>Inception Date:</b> </td>
+                                <td>18/03/2018</td>
+                                <td><b>Status:</b></td>
+                                <td>Active</td>
+                                <td><b></b></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><b>Total Contribution:</b></td>
+                                <td>$1500.00</td>
+                                <td><b>Employee Share:</b></td>
+                                <td>$1000.00</td>
+                                <td><b>Employer Share:</b></td>
+                                <td>$500.00</td>
+                            </tr>
+                            <tr>
+                                <td><b>Allocation:</b></td>
+                                <td>
+                                    <select>
+                                        <option value="Manual">Manual</option>
+                                        <option value="Third Party">Third Party</option>
+                                    </select>
+                                </td>
+                                <td><b></b></td>
+                                <td></td>
+                                <td><b></b></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td><b>Total Funds Value:</b></td>
+                                <td>$1760.00</td>
+                                <td><b></b></td>
+                                <td></td>
+                                <td><b></b></td>
+                                <td></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="legendbottombg">
+                    </div>
+                </fieldset>
+            </div>
+            <!--End Contribution  Details-->
+        }
+
+        @if ((Model.policyType == "INLF" && Cov_BussinessClass == "I") || (Model.policyType == "CRED" && Cov_BussinessClass == "I") || (Model.policyType == "PENS" && (Cov_BussinessClass == "I" || Cov_BussinessClass == null)))
+        {
+            <div align="center" id="tblAddMember">
+                <button id="imbAddMemberNo" name="Command" class="insureedge-button" value="No">Continue</button>
+            </div>
+        }
+        else
+        {
+            <div class="displayBlock">
+                <table id="tblAddMember" style="display:none;">
+                    <tr>
+                        <td>
+                            Do you want to add another Member?
+                        </td>
+                        <td>
+                            <button id="imbAddMemberYes" name="Command" onclick="return Showloader();" class="insureedge-button" value="Yes">Yes</button>
+                        </td>
+                        <td>
+                            <button id="imbAddMemberNo" name="Command" onclick="return Showloader();" class="insureedge-button" value="No">No</button>
+                            <input type="hidden" id="hdnPrevent" value="1" />
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        }
+
+    </div>
+    <div align="center" id="divEditMember">
+        <div class="button-row">
+            <button id="imgSubmitMember" name="Command" class="insureedge-button" style="display:none;" value="Save">Save</button>
+            @if (!((Model.policyType == "IHLH" && Cov_BussinessClass == "I") || (Model.policyType == "CRED" && Cov_BussinessClass == "I") || (Model.policyType == "EMPB" && Cov_BussinessClass == "I") || (Model.policyType == "INLF" && Cov_BussinessClass == "I") || (Model.policyType == "PENS" && Cov_BussinessClass == "I")))
+            {
+                <button id="imgBtnCancel" name="Command" class="insureedge-button" style="display:none;" value="Cancel">Cancel</button>
+            }
+        </div>
+    </div>
+}
+<script type="text/javascript">
+    Variables.PolicyUrl = '@Url.Action("", "Policy")';
+</script>
+
+

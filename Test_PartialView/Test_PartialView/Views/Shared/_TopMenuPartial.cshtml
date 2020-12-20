@@ -1,0 +1,95 @@
+﻿@model Insurance.Life.Model.Models.UserDetails
+<script src="~/Scripts/Common/TopMenu.js"></script>
+<div class="step-bar" id="divTopMenu">
+    <span class="middleline">
+        @{
+            if (Model.TabsDetails != null)
+            {
+                bool currentTab = false;
+                string linkName = "";
+                string activeClassName = "";
+                string controllerName = "";
+
+                foreach (var tabDetails in Model.TabsDetails)
+                {
+
+                    if (!currentTab)
+                    {
+                        if (@tabDetails.ActionName != null)
+                        {
+                            linkName = @tabDetails.ActionName.Trim();
+                        }
+                        else
+                        {
+                            linkName = "";
+                        }
+
+                        if (@tabDetails.ControllerName != null)
+                        {
+                            controllerName = @tabDetails.ControllerName.Trim();
+                        }
+                        else
+                        {
+                            controllerName = "";
+                        }
+                    }
+                    else
+                    {
+                        linkName = "";
+                        controllerName = "";
+                    }
+
+                    if (tabDetails.Tab_Name.Trim() == Model.CurrentTab)
+                    {
+                        currentTab = true;
+                        activeClassName = "active";
+                    }
+                    else
+                    {
+                        activeClassName = "";
+                    }
+
+                    if (!String.IsNullOrEmpty(linkName))
+                    {
+                        linkName = "../" + controllerName + "/" + linkName;
+
+                        <a id="@tabDetails.ActionName.Trim()" href="Javascript:" onclick="GetURL(this)" data-url="@linkName" class="@activeClassName">@tabDetails.Tab_Name.Trim()</a>
+                    }
+                    else
+                    {
+                        if (@tabDetails.ActionName != null)
+                        {
+                            <a id="@tabDetails.ActionName.Trim()" class="@activeClassName">@tabDetails.Tab_Name.Trim()</a>
+                        }
+                    }
+                }
+
+            }
+        }
+    </span>
+
+
+</div>
+<input id="btnAddNote" type="button" value="Add Note" class="insureedge-button" onclick="showAddNote();" style="display:none;" />
+
+<script>
+    function GetURL(dis) {
+        var url = $(dis).attr('data-url');
+       var QuoteNo = @ViewBag.QuoteNo;
+
+        $.ajax({
+            url: '/Policy/GetTabURL',
+            type: "POST",
+            data: JSON.stringify({ 'url': url, 'quoteNo': QuoteNo }),
+            dataType: "json",
+            traditional: true,
+            contentType: "application/json; charset=utf-8",
+            success: function (data) {
+                window.location.href = data;
+            },
+            error: function (data) {
+            }
+        });
+    }
+</script>
+
