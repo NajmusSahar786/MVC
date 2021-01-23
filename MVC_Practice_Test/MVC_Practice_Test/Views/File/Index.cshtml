@@ -49,12 +49,13 @@
                 let srandomid = Math.random().toString(36).substring(7);
 
                 formdata.append(sfilename, fileInput.files[i]);
-
+               
                 var markup = "<tr id='" + srandomid + "'><td>" + sfilename + "</td><td><a href='#' onclick='DeleteFile(\"" + srandomid + "\",\"" + sfilename +
                     "\")'><span class='glyphicon glyphicon-remove red'></span></a></td></tr>"; // Binding the file name
                 $("#FilesList tbody").append(markup);
 
             }
+           
             chkatchtbl();
             $('#fileInput').val('');
         });
