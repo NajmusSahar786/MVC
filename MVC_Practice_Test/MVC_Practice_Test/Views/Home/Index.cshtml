@@ -3,9 +3,12 @@
     ViewBag.Title = "Index";
 }
 <script src="~/Scripts/jquery-3.5.1.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+
 <h3>We suggest the following :</h3>
 <div class="col-md-5">
-
+    @Html.ActionLink("Multiple File Upload", "Index", "File")
+    <hr />
     @Html.ActionLink("Employee Controller", "AddEmployee", "Employee")
     <hr />
     @Html.ActionLink("Employee list using ViewModel", "ViewModelDemo")
@@ -33,8 +36,7 @@
 
 <script>
 
-    $(document).ready(function ()
-    {
+    $(document).ready(function () {
         $("#imageBrowse").change(function () {
             var File = this.files;
             if (File && File[0]) {
@@ -43,13 +45,11 @@
         })
     })
 
-    var ReadImage = function (file)
-    {
+    var ReadImage = function (file) {
         var reader = new FileReader;
         var image = new Image;
         reader.readAsDataURL(file);
-        reader.onload = function (_file)
-        {
+        reader.onload = function (_file) {
             image.src = _file.target.result;
             image.onload = function () {
                 var height = this.height;
@@ -63,8 +63,7 @@
         }
     }
 
-    var ClearPreview = function ()
-    {
+    var ClearPreview = function () {
         $("#imageBrowse").val('');
         $("#description").text('');
         $("#imgPreview").hide();
